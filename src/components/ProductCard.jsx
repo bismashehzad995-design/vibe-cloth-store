@@ -30,12 +30,12 @@ export default function ProductCard({ product, onEdit, onDelete }) {
   return (
     <>
       <div className="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-        <div className="relative pb-[75%] bg-gray-100">
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            className="absolute inset-0 w-full h-58 object-cover"
-          />
+        <div className="relative h-64 w-full bg-gray-100">
+  <img
+    src={product.imageUrl}
+    alt={product.name}
+    className="absolute inset-0 w-full h-full object-cover"
+  />
           {isAdmin && (
             <div className="absolute top-2 right-2 flex gap-1">
               <button
