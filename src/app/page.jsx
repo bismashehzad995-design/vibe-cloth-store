@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/context/ModalContext";
+import Link from "next/link";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -24,12 +25,11 @@ export default function LandingPage() {
               <span>💫 Refresh your wardrobe</span>
             </div>
             <div className="mt-8">
-              <button
-                onClick={() => openModal(false)}
-                className="bg-black text-white px-6 py-2.5 rounded-full font-medium hover:bg-gray-800 transition shadow-md"
-              >
-                Browse Collection
-              </button>
+              <Link href="/preview">
+                <button className="bg-black text-white px-6 py-2.5 rounded-full font-medium hover:bg-gray-800 transition shadow-md">
+                  Browse Collection
+                </button>
+              </Link>
             </div>
             <div className="mt-12 space-y-6">
               <img
@@ -52,10 +52,11 @@ export default function LandingPage() {
               alt="Trend"
               className="w-full rounded-xl shadow-md object-cover h-130"
             />
+            {/* ✅ 4th image ki height ab aur zyada (h-[40rem] = 640px) */}
             <img
               src="https://pk.sapphireonline.pk/dw/image/v2/BKSB_PRD/on/demandware.static/-/Sites-sapphire-master-catalog/default/dw7a5c5689/images/April26/22ndApril26/PRS26SCH143S_999_2.JPG?sw=1000&sh=1200"
               alt="Outfit"
-              className="w-full rounded-xl shadow-md object-cover h-218"
+              className="w-full rounded-xl shadow-md object-cover h-[59rem]"
             />
           </div>
         </div>

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-// Static preview products (12 items – lightweight images)
+// Static preview products (same as yours)
 const previewProducts = [
   { id: 1, name: "Hania Aamir", price: 2499, image: "https://neel.pk/cdn/shop/files/W.SS24.221.T-4_1946x_46555fd9-9e74-4d32-a042-1700efd63e55.jpg?v=1718488499&width=360" },
   { id: 2, name: "Sajal & Saboor Ali", price: 1899, image: "https://i.pinimg.com/1200x/68/2f/fa/682ffa26859d08e7cd90c43ca2c6c77a.jpg" },
@@ -46,24 +46,30 @@ export default function PreviewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 flex flex-col">
-      {/* Hero banner */}
-      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 py-12 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-800">✨ Explore Our Preview Collection ✨</h2>
-        <p className="text-gray-600 mt-2">Sign in to unlock full access and shop these styles</p>
+    <div className="min-h-screen bg-gradient-to-br from-white to-gray-50">
+      {/* Hero section */}
+      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 py-12 md:py-16 text-center px-4">
+        <h2 className="text-2xl md:text-4xl font-bold text-gray-800">✨ Explore Our Preview Collection ✨</h2>
+        <p className="text-gray-600 mt-2 text-sm md:text-base">Sign in to unlock full access and shop these styles</p>
       </div>
 
-      {/* Product grid – price removed from cards */}
-      <div className="flex-grow px-4 sm:px-6 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {/* Product grid – image height increased to h-96 (384px) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map((product) => (
-            <div key={product.id} className="bg-white rounded-xl p-4 text-center shadow-md hover:shadow-lg transition">
-              <img src={product.image} alt={product.name} className="w-full h-100 object-cover rounded-lg mb-3" />
-              <h3 className="font-semibold text-gray-800">{product.name}</h3>
-              {/* Price line removed */}
+            <div key={product.id} className="bg-white rounded-xl p-4 text-center shadow-md hover:shadow-lg transition duration-300">
+              <div className="w-full h-96 mb-3 overflow-hidden rounded-lg">
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  className="w-full h-full object-cover hover:scale-105 transition duration-300"
+                />
+              </div>
+              <h3 className="font-semibold text-gray-800 text-base">{product.name}</h3>
             </div>
           ))}
         </div>
+        
         <div className="text-center mt-12">
           <button
             onClick={() => router.push("/")}

@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Providers from "./providers";
 import AuthModal from "@/components/AuthModal";
+import './globals.css'
 
 export const metadata = {
   title: "Cloth Reseller",
