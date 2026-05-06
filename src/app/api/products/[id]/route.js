@@ -2,58 +2,65 @@ import { connectToDatabase } from "@/lib/mongodb";
 import Product from "@/models/Product";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
-import fs from "fs";
-import path from "path";
 
+// PUT – edit product (JSON based, no file upload)
 export async function PUT(req, { params }) {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "admin") {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
-  await connectToDatabase();
-  const product = await Product.findById(params.id);
-  if (!product) return Response.json({ error: "Not found" }, { status: 404 });
 
-  const formData = await req.formData();
-  const name = formData.get("name");
-  const brand = formData.get("brand");
-  const description = formData.get("description");
-  const price = parseFloat(formData.get("price"));
-  const rating = parseFloat(formData.get("rating"));
-  if (name) product.name = name;
-  if (brand) product.brand = brand;
-  if (description) product.description = description;
-  if (!isNaN(price)) product.price = price;
-  if (!isNaN(rating)) product.rating = rating;
+  try {
+    await connectToDatabase();
+    const { id } = params;
+    const data = await req.json();  // JSON data from frontend
+    const { name, brand, description, price, rating, imageUrl } = data;
 
-  const imageFile = formData.get("image");
-  if (imageFile && imageFile.size > 0) {
-    const oldPath = path.join(process.cwd(), "public", product.imageUrl);
-    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-    const bytes = await imageFile.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const ext = imageFile.name.split(".").pop();
-    const filename = Date.now() + "-" + Math.round(Math.random() * 1E9) + "." + ext;
-    const uploadDir = path.join(process.cwd(), "public/uploads");
-    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-    fs.writeFileSync(path.join(uploadDir, filename), buffer);
-    product.imageUrl = `/uploads/${filename}`;
+    if (!name || !price || !imageUrl) {
+      return Response.json({ error: "Name, price and image URL are required" }, { status: 400 });
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      {
+        name,
+        brand: brand || "",
+        description: description || "",
+        price: Number(price),
+        rating: rating || 0,
+        imageUrl,  // direct URL – no file handling
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedProduct) {
+      return Response.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    return Response.json(updatedProduct);
+  } catch (error) {
+    console.error("PUT error:", error);
+    return Response.json({ error: error.message }, { status: 500 });
   }
-
-  await product.save();
-  return Response.json(product);
 }
 
+// DELETE – remove product (no local file deletion needed)
 export async function DELETE(req, { params }) {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "admin") {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
-  await connectToDatabase();
-  const product = await Product.findById(params.id);
-  if (!product) return Response.json({ error: "Not found" }, { status: 404 });
-  const oldPath = path.join(process.cwd(), "public", product.imageUrl);
-  if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-  await product.deleteOne();
-  return Response.json({ message: "Deleted" });
+
+  try {
+    await connectToDatabase();
+    const { id } = params;
+    const deleted = await Product.findByIdAndDelete(id);
+    if (!deleted) {
+      return Response.json({ error: "Product not found" }, { status: 404 });
+    }
+    return Response.json({ message: "Deleted successfully" });
+  } catch (error) {
+    console.error("DELETE error:", error);
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 }
