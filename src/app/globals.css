@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 /* Sidebar ya kisi bhi element se scrollbar hide karne ke liye */
 .scrollbar-hide::-webkit-scrollbar {
     display: none;
