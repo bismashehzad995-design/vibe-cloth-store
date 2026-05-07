@@ -11,7 +11,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-gradient-to-br from-white to-gray-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          {/* Left column - brand & text */}
+          {/* Left column */}
           <div className="text-center lg:text-left">
             <h1 className="text-6xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-gray-900">
               Outfit<span className="text-indigo-600"> Vibes</span>
@@ -25,11 +25,13 @@ export default function LandingPage() {
               <span>💫 Refresh your wardrobe</span>
             </div>
             <div className="mt-8">
-              <Link href="/preview">
-                <button className="bg-black text-white px-6 py-2.5 rounded-full font-medium hover:bg-gray-800 transition shadow-md">
-                  Browse Collection
-                </button>
-              </Link>
+              {/* 🔥 FIXED: router.push directly */}
+             <Link href="/preview">
+  <button className="bg-black text-white px-6 py-2.5 rounded-full font-medium hover:bg-gray-800 transition shadow-md">
+    Browse Collection
+  </button>
+</Link>
+
             </div>
             <div className="mt-12 space-y-6">
               <img
@@ -45,14 +47,13 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Right column - images (taller ones) */}
+          {/* Right column */}
           <div className="space-y-6">
             <img
               src="https://nishatlinen.com/cdn/shop/files/1500x1500.jpg?v=1769422642&width=500"
               alt="Trend"
               className="w-full rounded-xl shadow-md object-cover h-130"
             />
-            {/* ✅ 4th image ki height ab aur zyada (h-[40rem] = 640px) */}
             <img
               src="https://pk.sapphireonline.pk/dw/image/v2/BKSB_PRD/on/demandware.static/-/Sites-sapphire-master-catalog/default/dw7a5c5689/images/April26/22ndApril26/PRS26SCH143S_999_2.JPG?sw=1000&sh=1200"
               alt="Outfit"
