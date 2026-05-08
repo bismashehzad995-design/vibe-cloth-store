@@ -21,7 +21,7 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
         <Link href="/" className="text-2xl font-extrabold tracking-tight text-gray-800">
-          Clothes<span className="text-indigo-600"> Reseller</span>
+          Outfit<span className="text-indigo-600"> Vibes</span>
         </Link>
         <div className="flex items-center gap-4">
           {session ? (

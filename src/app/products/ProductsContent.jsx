@@ -144,7 +144,7 @@ export default function ProductsContent() {
 
   return (
     <div className="max-w-[1600px] mx-auto px-3 sm:px-4 py-4 sm:py-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-5 sm:mb-8 border-b pb-4">
+      <div className="flex flex-col sm:flex-row mt-5 justify-between items-start sm:items-center gap-3 mb-5 sm:mb-8 border-b pb-4">
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -183,22 +183,23 @@ export default function ProductsContent() {
           </div>
         )}
 
-        <aside className="hidden md:block md:w-72 md:sticky md:top-24 h-full">
-  <div className="p-4 border-r">
-    <div className="flex justify-between items-center mb-4 pb-2 border-b">
-      <h2 className="font-bold text-lg">Filters</h2>
-      <button 
-        onClick={() => setIsSidebarOpen(false)} 
-        className="text-gray-500 hover:text-red-500 transition"
-        title="Close filters"
-      >
-        ✕
-      </button>
+       {isSidebarOpen && (
+  <aside className="hidden md:block md:w-72 md:sticky md:top-24 h-full">
+    <div className="p-4 border-r">
+      <div className="flex justify-between items-center mb-4 pb-2 border-b">
+        <h2 className="font-bold text-lg">Filters</h2>
+        <button
+          onClick={() => setIsSidebarOpen(false)}
+          className="text-gray-500 hover:text-red-500 transition"
+          title="Close filters"
+        >
+          ✕
+        </button>
+      </div>
+      <FilterSidebar filters={filters} onFilterChange={handleFilterChange} products={products} />
     </div>
-    <FilterSidebar filters={filters} onFilterChange={handleFilterChange} products={products} />
-  </div>
-</aside>
-
+  </aside>
+)}
         <main className="flex-1 w-full px-0 sm:px-4">
           <div className="mb-6">
             <input
