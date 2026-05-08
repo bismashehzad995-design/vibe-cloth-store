@@ -5,7 +5,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import nodemailer from "nodemailer";
-export const dynamic = 'force-dynamic';
+
 // Email send helper
 async function sendReturnEmail(returnRequest, order, customerName) {
   try {
