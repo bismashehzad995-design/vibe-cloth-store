@@ -184,10 +184,20 @@ export default function ProductsContent() {
         )}
 
         <aside className="hidden md:block md:w-72 md:sticky md:top-24 h-full">
-          <div className="p-4 border-r">
-            <FilterSidebar filters={filters} onFilterChange={handleFilterChange} products={products} />
-          </div>
-        </aside>
+  <div className="p-4 border-r">
+    <div className="flex justify-between items-center mb-4 pb-2 border-b">
+      <h2 className="font-bold text-lg">Filters</h2>
+      <button 
+        onClick={() => setIsSidebarOpen(false)} 
+        className="text-gray-500 hover:text-red-500 transition"
+        title="Close filters"
+      >
+        ✕
+      </button>
+    </div>
+    <FilterSidebar filters={filters} onFilterChange={handleFilterChange} products={products} />
+  </div>
+</aside>
 
         <main className="flex-1 w-full px-0 sm:px-4">
           <div className="mb-6">
