@@ -1,13 +1,12 @@
 "use client";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import ProductForm from "@/components/ProductForm";
 import FilterSidebar from "@/components/FilterSidebar";
 
-// 1. Asal logic wala component
-function ProductsContent() {
+export default function ProductsPage() {
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === "admin";
   const searchParams = useSearchParams();
@@ -128,10 +127,24 @@ function ProductsContent() {
     });
   };
 
-  if (loading) return <div className="text-center py-10">Loading Products...</div>;
+  const clearAllFilters = () => {
+    setFilters({
+      priceRange: 10000,
+      sortBy: "default",
+      brands: [],
+      categories: [],
+      productTypes: [],
+      newArrivals: false,
+      itemsPerPage: 4,
+    });
+    setSearchQuery("");
+  };
+
+  if (loading) return <div className="text-center py-10">Loading...</div>;
 
   return (
     <div className="max-w-[1600px] mx-auto px-3 sm:px-4 py-4 sm:py-8">
+      {/* Header - mobile friendly (stacked) */}
       <div className="flex flex-col mt-5 sm:flex-row justify-between items-start sm:items-center gap-3 mb-5 sm:mb-8 border-b pb-4">
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <button
@@ -197,6 +210,22 @@ function ProductsContent() {
           ) : filteredProducts.length === 0 ? (
             <div className="text-center py-32 bg-gray-50 rounded-3xl border-dashed border-2">
               <p className="text-gray-400 text-xl">No matches.</p>
+              <button
+                onClick={() => {
+                  setFilters({
+                    priceRange: 10000,
+                    sortBy: "default",
+                    brands: [],
+                    categories: [],
+                    newArrivals: false,
+                    itemsPerPage: 4,
+                  });
+                  setSearchQuery("");
+                }}
+                className="mt-4 text-indigo-600 hover:underline"
+              >
+                Clear filters
+              </button>
             </div>
           ) : (
             <div className="space-y-12">
@@ -213,6 +242,9 @@ function ProductsContent() {
                         {brand}
                       </h2>
                       <div className="flex items-center gap-3">
+                        <span className="text-sm text-gray-500">
+                          {start + 1}–{Math.min(start + perPage, brandProducts.length)} of {brandProducts.length}
+                        </span>
                         <button
                           onClick={() => goToPage(brand, "prev")}
                           disabled={page === 0}
@@ -261,14 +293,5 @@ function ProductsContent() {
         />
       )}
     </div>
-  );
-}
-
-// 2. Main Export jo Suspense use karta hai
-export default function ProductsPage() {
-  return (
-    <Suspense fallback={<div className="text-center py-20">Loading page...</div>}>
-      <ProductsContent />
-    </Suspense>
   );
 }
