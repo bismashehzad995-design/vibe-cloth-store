@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { useModal } from "@/context/ModalContext";
 import Link from "next/link";
 
+
 export default function LandingPage() {
   const router = useRouter();
   const { openModal } = useModal();

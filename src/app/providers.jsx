@@ -2,6 +2,7 @@
 import { SessionProvider } from "next-auth/react";
 import { CartProvider } from "@/context/CartContext";
 import { ModalProvider } from "@/context/ModalContext";
+import { WishlistProvider } from "@/context/WishlistContext";
 import { Toaster } from "react-hot-toast";
 
 export default function Providers({ children }) {
@@ -9,8 +10,10 @@ export default function Providers({ children }) {
     <SessionProvider>
       <CartProvider>
         <ModalProvider>
-          {children}
-          <Toaster position="bottom-center" />
+          <WishlistProvider>
+            {children}
+            <Toaster position="bottom-center" />
+          </WishlistProvider>
         </ModalProvider>
       </CartProvider>
     </SessionProvider>

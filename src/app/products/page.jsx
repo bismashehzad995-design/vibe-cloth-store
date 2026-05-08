@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import ProductForm from "@/components/ProductForm";
 import FilterSidebar from "@/components/FilterSidebar";
@@ -8,6 +9,8 @@ import FilterSidebar from "@/components/FilterSidebar";
 export default function ProductsPage() {
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === "admin";
+  const searchParams = useSearchParams();
+  const brandParam = searchParams.get("brand");
 
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -20,11 +23,22 @@ export default function ProductsPage() {
     priceRange: 10000,
     sortBy: "default",
     brands: [],
+    categories: [],
+    productTypes: [],
     newArrivals: false,
     itemsPerPage: 4,
   });
   const [currentPage, setCurrentPage] = useState({});
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (brandParam) {
+      setFilters((prev) => ({
+        ...prev,
+        brands: [brandParam],
+      }));
+    }
+  }, [brandParam]);
 
   useEffect(() => {
     fetchProducts();
@@ -65,12 +79,16 @@ export default function ProductsPage() {
     if (filters.brands.length > 0) {
       filtered = filtered.filter((p) => filters.brands.includes(p.brand));
     }
+    if (filters.categories.length > 0) {
+      filtered = filtered.filter((p) => p.category && filters.categories.includes(p.category));
+    }
+    if (filters.productTypes.length > 0) {
+      filtered = filtered.filter((p) => p.productType && filters.productTypes.includes(p.productType));
+    }
     if (filters.newArrivals) {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      filtered = filtered.filter(
-        (p) => new Date(p.createdAt) >= thirtyDaysAgo
-      );
+      filtered = filtered.filter((p) => new Date(p.createdAt) >= thirtyDaysAgo);
     }
     if (filters.sortBy === "price_asc") {
       filtered.sort((a, b) => a.price - b.price);
@@ -109,31 +127,35 @@ export default function ProductsPage() {
     });
   };
 
+  const clearAllFilters = () => {
+    setFilters({
+      priceRange: 10000,
+      sortBy: "default",
+      brands: [],
+      categories: [],
+      productTypes: [],
+      newArrivals: false,
+      itemsPerPage: 4,
+    });
+    setSearchQuery("");
+  };
+
   if (loading) return <div className="text-center py-10">Loading...</div>;
 
   return (
-    <div className="max-w-[1600px] mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8 border-b pb-6">
-        <div className="flex items-center gap-4">
+    <div className="max-w-[1600px] mx-auto px-3 sm:px-4 py-4 sm:py-8">
+      {/* Header - mobile friendly (stacked) */}
+      <div className="flex flex-col mt-5 sm:flex-row justify-between items-start sm:items-center gap-3 mb-5 sm:mb-8 border-b pb-4">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-3 bg-gray-100 hover:bg-gray-200 rounded-xl"
+            className="p-2 bg-gray-100 hover:bg-gray-200 rounded-xl"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
             </svg>
           </button>
-          <h1 className="text-3xl font-extrabold text-gray-800">Products</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-800">Categories</h1>
         </div>
         {isAdmin && (
           <button
@@ -141,30 +163,25 @@ export default function ProductsPage() {
               setEditingProduct(null);
               setShowForm(true);
             }}
-            className="bg-indigo-600 text-white px-6 py-2.5 rounded-xl"
+            className="w-full sm:w-auto bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm sm:text-base"
           >
             + Add New Item
           </button>
         )}
       </div>
       <div className="flex flex-col md:flex-row gap-0 relative">
-       <aside
-  className={`${
-    isSidebarOpen
-      ? "translate-x-0 opacity-100 w-full md:w-72 p-5 border-r"
-      : "-translate-x-full opacity-0 w-0 overflow-hidden p-0 border-none"
-  } transition-all duration-500 bg-white shadow-sm md:sticky md:top-24 z-20 max-h-[calc(100vh-120px)] overflow-y-auto scrollbar-hide`}
->
+        <aside
+          className={`${
+            isSidebarOpen
+              ? "translate-x-0 opacity-100 w-full md:w-72 p-5 border-r"
+              : "-translate-x-full opacity-0 w-0 overflow-hidden p-0 border-none"
+          } transition-all duration-500 bg-white shadow-sm md:sticky md:top-24 z-20 max-h-[calc(100vh-120px)] overflow-y-auto scrollbar-hide`}
+        >
           {isSidebarOpen && (
             <div className="min-w-[250px]">
               <div className="flex justify-between items-center mb-5 pb-2 border-b">
-                <h2 className="text-md font-bold uppercase tracking-wider">
-                  Filters
-                </h2>
-                <button
-                  onClick={() => setIsSidebarOpen(false)}
-                  className="text-gray-400 hover:text-red-500"
-                >
+                <h2 className="text-md font-bold uppercase tracking-wider">Filters</h2>
+                <button onClick={() => setIsSidebarOpen(false)} className="text-gray-400 hover:text-red-500">
                   ✕
                 </button>
               </div>
@@ -199,6 +216,7 @@ export default function ProductsPage() {
                     priceRange: 10000,
                     sortBy: "default",
                     brands: [],
+                    categories: [],
                     newArrivals: false,
                     itemsPerPage: 4,
                   });
@@ -225,54 +243,24 @@ export default function ProductsPage() {
                       </h2>
                       <div className="flex items-center gap-3">
                         <span className="text-sm text-gray-500">
-                          {start + 1}–
-                          {Math.min(start + perPage, brandProducts.length)} of{" "}
-                          {brandProducts.length}
+                          {start + 1}–{Math.min(start + perPage, brandProducts.length)} of {brandProducts.length}
                         </span>
                         <button
                           onClick={() => goToPage(brand, "prev")}
                           disabled={page === 0}
-                          className={`p-2 rounded-full ${
-                            page === 0
-                              ? "text-gray-300"
-                              : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                          }`}
+                          className={`p-2 rounded-full ${page === 0 ? "text-gray-300" : "bg-gray-100 hover:bg-gray-200 text-gray-700"}`}
                         >
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M15 19l-7-7 7-7"
-                            />
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                           </svg>
                         </button>
                         <button
                           onClick={() => goToPage(brand, "next")}
                           disabled={page >= totalPages - 1}
-                          className={`p-2 rounded-full ${
-                            page >= totalPages - 1
-                              ? "text-gray-300"
-                              : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                          }`}
+                          className={`p-2 rounded-full ${page >= totalPages - 1 ? "text-gray-300" : "bg-gray-100 hover:bg-gray-200 text-gray-700"}`}
                         >
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M9 5l7 7-7 7"
-                            />
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                           </svg>
                         </button>
                       </div>

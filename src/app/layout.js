@@ -1,9 +1,9 @@
 import "./globals.css";
+import Providers from "./providers";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import Providers from "./providers";
+import BottomNavigation from "@/components/BottomNavigation";
 import AuthModal from "@/components/AuthModal";
-import './globals.css'
 
 export const metadata = {
   title: "Cloth Reseller",
@@ -18,8 +18,10 @@ export default function RootLayout({ children }) {
           <AuthModal />
           <div className="min-h-screen flex flex-col">
             <Navbar />
-            <main className="flex-grow">{children}</main>
+            <main className="flex-grow pb-5">{children}</main>
             <Footer />
+            {/* BottomNavigation is conditionally rendered inside it (only for logged‑in non‑admin) */}
+            <BottomNavigation />
           </div>
         </Providers>
       </body>
